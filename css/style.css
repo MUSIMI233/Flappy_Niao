@@ -1,0 +1,138 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	background-color: lightgray;
+	font-family: Arial, sans-serif;
+	font-size: 16px;
+	display: flex;
+	flex-direction: column; /* Column layout to stack elements vertically */
+	justify-content: center;
+	align-items: center;
+}
+
+#guide {
+	display: flex;
+	position: fixed;
+	bottom: 0;
+	left: 40px;
+	width: 800px;
+	z-index: 1001; /* 确保它显示在其他元素之上 */
+	flex-direction: column;
+	align-items: flex-start;
+	background-color: transparent; /* 背景透明 */
+}
+
+/* 设置 guide 图片 */
+#guide-image {
+	max-width: 500px;
+	height: auto;
+	z-index: 999;
+}
+
+/* 设置气泡内容 */
+.bubble {
+	position: absolute;
+	margin-left: 150px;
+	background-color: #03A678;
+	color: white;
+	padding: 20px;
+	border-radius: 15px;
+	z-index: 1000; /* 显示在图片上面 */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.bubble p {
+	margin-top: 0;
+	margin-bottom: 10px;
+	font-size: 16px;
+	text-align: center;
+	line-height: 1.6;
+}
+
+/* 按钮样式 */
+#guide-btn {
+	background-color: lightcoral;
+	color: white;
+	border: none;
+	padding: 8px 12px;
+	border-radius: 5px;
+	cursor: pointer;
+}
+
+#guide-btn:hover {
+	background-color:  #81c784;
+}
+
+.nav {
+	display: flex ;
+	justify-content: center ;
+	align-items: center ;
+	background-color: #03A678;
+	width: 100% ;
+	height: 100px ;
+	box-shadow: rgba(0,0,0,0.5) 0 10px 10px;
+}
+
+.nav-container {
+	display: flex;
+	align-items: center;
+	justify-content: space-between; /* 左右对齐 */
+	padding: 20px 20px;
+	width: 100%;
+	margin: 0 auto;
+}
+
+/* 确保 logo 和文字并排显示，且比例不变 */
+.web-logo {
+	display: flex;
+	align-items: center; /* 确保 logo 和文字垂直方向居中 */
+}
+
+#logo-image {
+	max-height: 70px; /* 设置最大高度为导航栏的高度 */
+	padding-left: 20px;
+	margin-right: 10px; /* 设置图片和文字之间的间距 */
+}
+
+#logo-text {
+	font-size: 30px;
+	color: floralwhite; /* 设置文字颜色 */
+}
+
+/* 导航项样式 */
+.nav-items {
+	display: flex ;
+	list-style: none ;
+	margin: 0 ;
+	padding: 0 ;
+	gap: 20px ;
+	align-items: center ; /* 确保 nav-items 内的按钮垂直居中 */
+}
+
+.buttons {
+	text-decoration: none ;
+	color: white ;
+	padding: 8px 15px ;
+	border-radius: 4px ;
+	font-weight: 500 ;
+	transition: all 0.3s ease ;
+}
+
+.buttons:hover {
+	background-color: #81c784 ;
+	color: white ;
+}
+
+#map {
+	width: 100% ;
+	height: calc(100vh - 100px); ;
+	/* Uses viewport (vw & vh) units: https://css-tricks.com/fun-viewport-units */
+	background-color: white;
+	/*box-shadow: rgba(0,0,0,0.5) 0 5px 10px;*/
+}

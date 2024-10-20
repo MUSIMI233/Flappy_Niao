@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obstacle Game</title>
+    <link rel="stylesheet" href="css/flappybird.css">
+</head>
+<body>
+    <div class="game-area">
+        <div class="character"></div>
+        <button class="pause-btn">Stop</button>
+        <div class="pause-window">
+            <div class="pause-content">
+                <h2>Game Paused</h2>
+                <div class="buttons">
+                    <button class="pause-exit-btn">Return to Map</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="game-over-window">
+        <div class="game-over-content">
+            <h2>Game Over</h2>
+            <div class="game-over-buttons">
+                <button class="retry-btn">Try Again</button>
+                <button class="game-over-exit-btn">Return to Menu</button>
+            </div>
+        </div>
+    </div>
+    <div class="game-pass-window">
+        <div class = "game-pass-content">
+            <h2>Well Done!Map Unlock!</h2>
+            <video id = "videoPlayer" controls autoplay muted>
+                <source src = "assets/endingAnimation/Green_ending.mp4" type = "video/mp4">
+            </video>
+            <div class="game-Completed-buttons">
+                <button class="game-over-exit-btn">Game Completed!</button>
+            </div>
+        </div>
+    </div>
+
+    <div id = "hintMessage" class = "hint">
+        <h1>Hold down the spacebar! <br>Release it to let the bird glide.</h1>
+    </div>
+    <script src="js/flappybird.js"></script>
+</body>
+</html>

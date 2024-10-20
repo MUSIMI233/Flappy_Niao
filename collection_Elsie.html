@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Little Plant Explorer</title>
+  <!--  link to css-->
+  <link rel="stylesheet" href="css/profile_Elsie.css">
+  <!--jQuery insert-->
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <nav class="nav">
+    <div class="nav-container">
+      <div class="web-logo">
+        <img id="logo-image" src="assets/images/logo.png" alt="Litter Plant Explorer">
+        <h1 id="logo-text">Little Plant Explorer</h1>
+      </div>
+      <ul class="nav-items">
+        <li><a class="buttons" href="index.html">MAP</a></li>
+        <li><a class="buttons" href="flappybird.html">GAME</a></li>
+        <li><a class="buttons" href="collection_Elsie.html">COLLECTION</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Filter Dropdowns -->
+  <div id="filter-section">
+    <label for="family-filter">Family Group:</label>
+    <select id="family-filter">
+      <option value="all">All</option>
+    </select>
+
+    <label for="genus-filter">Type:</label>
+    <select id="genus-filter">
+      <option value="all">All</option>
+    </select>
+
+    <label for="species-filter">Kind:</label>
+    <select id="species-filter">
+      <option value="all">All</option>
+    </select>
+  </div>
+
+  <section id='plants'>Loading...</section> <!--generating plant profiles by js-->
+
+  <script src="js/profiles_Elsie.js"></script><!--link to js file-->
+</body>
+</html>
