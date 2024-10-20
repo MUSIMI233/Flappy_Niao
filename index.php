@@ -35,7 +35,7 @@ if ($route === 'session_data') {
 
         if (isset($existing_data[session_id()])) {
             header('Content-Type: application/json');
-            echo json_encode(['status' => 'success', 'data' => $existing_data[session_id()]]);
+            echo json_encode(['status' => 'success', 'data' => $existing_data[session_id()]['data']]);
         } else {
             // 如果 session 中沒有數據
             header('Content-Type: application/json');
