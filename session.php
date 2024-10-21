@@ -39,7 +39,7 @@ if ($route === 'session_data') {
         } else {
             // 如果 session 中沒有數據
             header('Content-Type: application/json');
-            echo json_encode(['status' => 'error', 'message' => 'No data found for this session']);
+            echo json_encode(['status' => 'success', 'data' => ['level' => 0]]);
         }
         exit();
     }

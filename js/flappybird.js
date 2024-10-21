@@ -11,7 +11,7 @@ const gameOverWindow = document.querySelector('.game-over-window');
 const gamePassWindow = document.querySelector('.game-pass-window');
 const retryBtn = document.querySelector('.retry-btn');
 const hintMessage = document.getElementById('hintMessage');
-let completionTime = 0;
+var completionTime = 0;
     
 
 let characterY = window.innerHeight / 2;
@@ -339,65 +339,84 @@ function updateRewardCollectionnumber(count) {
 }
 
 // POST 请求：将数据发送到服务器并保存到 session 和文件
-function sendPostRequest(completionTime) {
-    fetch('/index.php?route=session_data', {
-        method: 'POST',  // 指定为 POST 请求
+async function sendPostRequest(completionTime) {
+    const response = await fetch('/session.php?route=session_data', {
+        method: 'POST',
         headers: {
-            'Content-Type': 'application/json'  // 设置请求头，声明发送的数据为 JSON
+            'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            'data': { "level": completionTime }  // 发送的数据，包含 "level" 字段
-        })
-    })
-    .then(response => response.json())  // 将响应解析为 JSON
-    .then(data => {
-        console.log('POST response:', data);  // 输出服务器返回的数据
-    })
-    .catch(error => {
-        console.error('Error in POST request:', error);  // 错误处理
+        body: JSON.stringify({'data':{
+            'level':completionTime
+        }})  // 將 completionTime 作為數據發送
     });
+
+    if (!response.ok) {  // 檢查響應狀態碼
+        throw new Error('Network response was not ok: ' + response.statusText);
+    }
+
+    const data = await response.json();
+    if (data.status === 'success') {
+        console.log('POST 成功:', data);
+    } else {
+        console.error('POST 錯誤:', data.message);
+    }
 }
 
 // GET 请求：从服务器获取会话数据
-function sendGetRequest() {
-    fetch('/index.php?route=session_data', {
-        method: 'GET',  // 指定为 GET 请求
-        headers: {
-            'Content-Type': 'application/json'  // 设置请求头，期望 JSON 响应
-        }
-    })
-    .then(response => {
+async function sendGetRequest() {
+    try {
+        const response = await fetch('/session.php?route=session_data', {
+            method: 'GET',  // 指定为 GET 请求
+            headers: {
+                'Content-Type': 'application/json'  // 设置请求头，期望 JSON 响应
+            }
+        });
+
         if (!response.ok) {  // 检查响应状态码
             throw new Error('Network response was not ok: ' + response.statusText);
         }
-        return response.json();  // 将响应解析为 JSON
-    })
-    .then(data => {
+
+        const data = await response.json();  // 將響應解析為 JSON
         if (data.status === 'success') {
-            console.log('GET response data:', data.data);  // 输出服务器返回的会话数据
+            console.log('GET response data:', data.data.level);  // 输出服务器返回的会话数据
+            return data.data.level;  // 返回 completionTime
         } else {
             console.error('Error in GET request:', data.message);  // 错误处理
+            return null;
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error('Error in GET request:', error);  // 网络或其他错误处理
-    });
+        return null;
+    }
+}
+
+// 在外部使用 async/await 調用 sendGetRequest 函數
+async function gameInit() {
+    // 使用 await 等待 sendGetRequest 完成，並獲取返回的 completionTime
+    completionTime = await sendGetRequest();
+
+    if (completionTime !== null) {
+        console.log('Completion time:', completionTime);  // 獲取並使用 completionTime
+        // 在這裡繼續處理 completionTime，或者進行後續操作
+    } else {
+        console.error('Failed to get completion time');
+    }
 }
 
 // 发送分数到服务器并处理页面跳转
-function sendScoreToServer(score) {
-    // 使用 AJAX 发送分数
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', 'update_game.php', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            // 在AJAX成功完成后再设置页面跳转
-            console.log('Score sent to server successfully.');
-        }
-    };
-    xhr.send('score=' + score);
-}
+// function sendScoreToServer(score) {
+//     // 使用 AJAX 发送分数
+//     const xhr = new XMLHttpRequest();
+//     xhr.open('POST', 'update_game.php', true);
+//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+//     xhr.onreadystatechange = function() {
+//         if (xhr.readyState === 4 && xhr.status === 200) {
+//             // 在AJAX成功完成后再设置页面跳转
+//             console.log('Score sent to server successfully.');
+//         }
+//     };
+//     xhr.send('score=' + score);
+// }
 
 // 检测通关
 function rewardCountPass() {
@@ -414,11 +433,12 @@ function rewardCountPass() {
         clearInterval(obstacleGenerationInterval);
 
         // 发送分数到服务器
-        sendScoreToServer(rewardCollected);
+        // sendScoreToServer(rewardCollected);
 
         // 添加跳转回主界面的逻辑
         const gameOverExitBtns = document.querySelectorAll('.game-over-exit-btn');
         gameOverExitBtns.forEach(btn => {
+            gameCompleted();
             btn.addEventListener('click', () => {
                 window.location.href = '/index.html'; // 主界面路径，调整为你的实际路径
             });
@@ -426,18 +446,17 @@ function rewardCountPass() {
     }
 }
 
-function gameCompleted() {
-    
-    completionTime++;
-    sendPostRequest(completionTime);
-    // 跳转到主页面
-    window.location.href = '/index.html';
+async function gameCompleted() {
+    try {
+        completionTime++;
+        // 使用 await 等待 POST 請求完成
+        await sendPostRequest(completionTime);
 
-    /* setTimeout(function () {
-        // 存储游戏完成状态到 localStorage
-        localStorage.setItem('gameCompleted', 'true');
-        console.log('游戏完成信号已存储到 localStorage');  
-    }, ); */
+        // POST 完成後進行跳轉
+        window.location.href = '/index.html';
+    } catch (error) {
+        console.error('Error in gameCompleted:', error);
+    }
 }
 
 // 显示提示信息
@@ -513,6 +532,7 @@ video.addEventListener('ended', function() {
 });
 
 
-gamePassExitBtn.addEventListener('click', function () {
-    gameCompleted();
-})
+// gamePassExitBtn.addEventListener('click', function () {
+//     gameCompleted();
+// })
+gameInit();
