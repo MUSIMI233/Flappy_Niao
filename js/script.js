@@ -78,15 +78,16 @@ $(document).ready(async function() {
 
 	// get species data from AP
 	async function getSpeciesData() {
-		fetch('https://biocache-ws.ala.org.au/ws/occurrences/search?q=data_resource_uid%3Adr2287&qualityProfile=AVH&fq=state%3A%22Queensland%22&fq=data_resource_uid%3A%22dr2287%22&fq=occurrence_status%3A%22PRESENT%22&fq=multimedia%3A%22Image%22&fq=(family%3A%22Acanthaceae%22%20OR%20family%3A%22Bataceae%22%20OR%20family%3A%22Clusiaceae%22%20OR%20family%3A%22Dichapetalaceae%22%20OR%20family%3A%22Elatinaceae%22)&qc=-_nest_parent_%3A*&pageSize=200')  // 替换为你的API URL
-			.then(response => response.json())
-			.then(apiData => {
-				var speciesData = apiData.occurrences;  // save species data do not display now
-				console.log(speciesData);
-			})
-			.catch(error => {
-				console.error('Error fetching API data:', error);
-			});
+		try {
+			const response = await fetch('https://biocache-ws.ala.org.au/ws/occurrences/search?q=data_resource_uid%3Adr2287&qualityProfile=AVH&fq=state%3A%22Queensland%22&fq=data_resource_uid%3A%22dr2287%22&fq=occurrence_status%3A%22PRESENT%22&fq=multimedia%3A%22Image%22&fq=(family%3A%22Acanthaceae%22%20OR%20family%3A%22Bataceae%22%20OR%20family%3A%22Clusiaceae%22%20OR%20family%3A%22Dichapetalaceae%22%20OR%20family%3A%22Elatinaceae%22)&qc=-_nest_parent_%3A*&pageSize=200');  // 替换为你的API URL
+			const apiData = await response.json();
+			var speciesData = apiData.occurrences;
+			console.log(speciesData);
+			return speciesData;
+		} catch (error) {
+			console.error('Error fetching API data:', error);
+			return null;
+		}
 	}
 
 
