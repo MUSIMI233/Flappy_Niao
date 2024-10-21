@@ -436,8 +436,8 @@ function rewardCountPass() {
         // sendScoreToServer(rewardCollected);
 
         // 添加跳转回主界面的逻辑
-        const gameOverExitBtns = document.querySelectorAll('.game-over-exit-btn');
-        gameOverExitBtns.forEach(btn => {
+        const gamePassExitBtn = document.querySelectorAll('.game-pass-exit-btn');
+        gamePassExitBtn.forEach(btn => {
             gameCompleted();
             btn.addEventListener('click', () => {
                 window.location.href = '/index.html'; // 主界面路径，调整为你的实际路径
@@ -453,7 +453,7 @@ async function gameCompleted() {
         await sendPostRequest(completionTime);
 
         // POST 完成後進行跳轉
-        window.location.href = '/index.html';
+       // window.location.href = '/index.html';
     } catch (error) {
         console.error('Error in gameCompleted:', error);
     }

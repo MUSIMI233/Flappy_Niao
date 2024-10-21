@@ -1,6 +1,7 @@
 // 获取元素
 const guide = document.getElementById('guide');
 const guideBtn = document.getElementById('guide-btn');
+var completionTime = 0;
 
 function getYear(year) {
 	if(year) {
@@ -27,7 +28,7 @@ function openGameWindow() {
 	window.location.href = "../flappybird.html";
 }
 
-$(document).ready(function() {
+$(document).ready(async function() {
 
 	guideBtn.addEventListener('click', () => {
 		// 首次点击后跳转到链接
@@ -125,6 +126,47 @@ $(document).ready(function() {
 	});
 	*/
 
+	// GET 请求：从服务器获取会话数据
+	async function sendGetRequest() {
+		try {
+			const response = await fetch('/session.php?route=session_data', {
+				method: 'GET',  // 指定为 GET 请求
+				headers: {
+					'Content-Type': 'application/json'  // 设置请求头，期望 JSON 响应
+				}
+			});
+
+			if (!response.ok) {  // 检查响应状态码
+				throw new Error('Network response was not ok: ' + response.statusText);
+			}
+
+			const data = await response.json();  // 將響應解析為 JSON
+			if (data.status === 'success') {
+				console.log('GET response data:', data.data.level);  // 输出服务器返回的会话数据
+				return data.data.level;  // 返回 completionTime
+			} else {
+				console.error('Error in GET request:', data.message);  // 错误处理
+				return null;
+			}
+		} catch (error) {
+			console.error('Error in GET request:', error);  // 网络或其他错误处理
+			return null;
+		}
+	}
+
+	// 在外部使用 async/await 調用 sendGetRequest 函數
+	async function gameInit() {
+		// 使用 await 等待 sendGetRequest 完成，並獲取返回的 completionTime
+		completionTime = await sendGetRequest();
+
+		if (completionTime !== null) {
+			console.log('Completion time:', completionTime);  // 獲取並使用 completionTime
+			// 在這裡繼續處理 completionTime，或者進行後續操作
+		} else {
+			console.error('Failed to get completion time');
+		}
+	}
+
 	// 当游戏成功通关时调用此函数
 	function onLevelSuccess() {
 		console.log("Current family index: " + currentFamilyIndex);
@@ -185,27 +227,33 @@ $(document).ready(function() {
 		gameSuccessHandler();  // 每次成功触发
 	}); */
 
-	/* function gameSuccessHandler() {
+	function successButton(completionTime) {
+		for (let i = 0; i < completionTime; i++) {
+			console.log('Button clicked!');
+			gameSuccessHandler();  // 每次成功触发
+		}
+	}
+
+	 function gameSuccessHandler() {
 		console.log('Game success logic triggered');
 		onLevelSuccess();  // 每次游戏成功后调用，显示新的family
 	}
-	 */
 
-	// 在页面加载时请求完成次数并执行后续逻辑
-    getGameCompletionCount().then(gameCompletionCount => {
-        console.log('Game completion count:', gameCompletionCount);
-
-        // 根据获取到的完成次数执行不同的逻辑
-        if (gameCompletionCount > 0) {
-            console.log('Game completed ' + gameCompletionCount + ' times');
-            // 这里可以根据完成次数显示不同的内容
-            for (let i = 0; i < gameCompletionCount; i++) {
-                onLevelSuccess();  // 每次通关显示新家族物种
-            }
-        } else {
-            console.log('No game completions detected');
-        }
-    });
+	// // 在页面加载时请求完成次数并执行后续逻辑
+    // getGameCompletionCount().then(gameCompletionCount => {
+    //     console.log('Game completion count:', gameCompletionCount);
+	//
+    //     // 根据获取到的完成次数执行不同的逻辑
+    //     if (gameCompletionCount > 0) {
+    //         console.log('Game completed ' + gameCompletionCount + ' times');
+    //         // 这里可以根据完成次数显示不同的内容
+    //         for (let i = 0; i < gameCompletionCount; i++) {
+    //             onLevelSuccess();  // 每次通关显示新家族物种
+    //         }
+    //     } else {
+    //         console.log('No game completions detected');
+    //     }
+    // });
 
 // 检查 localStorage 中是否有 'guideHidden' 键
 if (localStorage.getItem('guideHidden') === 'true') {
@@ -216,6 +264,9 @@ if (localStorage.getItem('guideHidden') === 'true') {
 	// 如果未隐藏，则显示指南
 	guide.style.display = 'flex';
 }
+
+	await gameInit();
+	successButton(completionTime);
 
 });
 
