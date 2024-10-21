@@ -11,15 +11,17 @@ const gameOverWindow = document.querySelector('.game-over-window');
 const gamePassWindow = document.querySelector('.game-pass-window');
 const retryBtn = document.querySelector('.retry-btn');
 const hintMessage = document.getElementById('hintMessage');
+let completionTime = 0;
+    
 
 let characterY = window.innerHeight / 2;
-let gravity = 0.3; // 掉落速度
+let gravity = 0.3;
 let jumpPower = -5;
 let velocity = 0;
 let isJumping = false;
 let isGameStarted = false;
 let isPaused = false;
-let jumpHeight = -5.5; // 跳跃高度
+let jumpHeight = -5.5;
 let rewardCollected = 0;
 let counterDisplay;
 let currentRound = 1;
@@ -46,35 +48,35 @@ window.addEventListener('keyup', function (event) {
 
 // 暂停按钮
 pauseBtn.addEventListener('click', function () {
-    isPaused = true; // 暂停游戏
-    pauseWindow.style.display = 'flex'; // 显示暂停窗口
+    isPaused = true; // stop the game
+    pauseWindow.style.display = 'flex';
     document.querySelectorAll('.obstacle').forEach(obstacle => {
-        obstacle.style.animationPlayState = 'paused'; // 暂停障碍物动画
+        obstacle.style.animationPlayState = 'paused'; // stop animation
     });
     document.querySelectorAll('.reward').forEach(reward => {
-        reward.style.animationPlayState = 'paused'; // 暂停奖励物品动画
+        reward.style.animationPlayState = 'paused'; // stop page
     });
 });
 
-// 继续按钮
+// continue
 /*resumeBtn.addEventListener('click', function () {
-    isPaused = false; // 恢复游戏
-    pauseWindow.style.display = 'none'; // 隐藏暂停窗口
+    isPaused = false; //
+    pauseWindow.style.display = 'none'; //
     document.querySelectorAll('.obstacle').forEach(obstacle => {
-        obstacle.style.animationPlayState = 'running'; // 恢复障碍物动画
+        obstacle.style.animationPlayState = 'running'; //
     });
     document.querySelectorAll('.reward').forEach(reward => {
-        reward.style.animationPlayState = 'running'; // 恢复奖励物品动画
+        reward.style.animationPlayState = 'running'; //
     });
 });
 
 */
-// 暂停界面的返回按钮
+// Back button for pause interface
 pauseExitBtn.addEventListener('click', function () {
     window.location.href = '/index.html';
 });
 
-// 游戏结束界面的返回按钮
+// The return button on the game end interface
 // gameOverExitBtn.addEventListener('click', function() {
 //     window.location.href = '/index.html';
 // });
@@ -126,8 +128,8 @@ function updateCharacter() {
 
 updateCharacter();
 
-// 障碍物生成
-// 底部图片数组
+// Creat Obstacle
+// button images
 const bottomImages = [
     {image: 'assets/images/weeds.png', threatName: 'Weeds'},
     {image: 'assets/images/bug.png', threatName: 'Bug'},
@@ -154,21 +156,21 @@ const topImages = [
 
 const rewardImages = ['assets/images/water.png', 'assets/images/sun.png'];
 const screenHeight = window.innerHeight;
-const gap = 400; // 柱子间隔
+const gap = 400; // gap of pipe
 
-// 定时生成障碍物，每2.5秒生成一次
+// 2.5s creat obstacle
 const obstacleGenerationInterval = setInterval(() => {
     createObstacle();
 }, 2500);
 
-// 碰撞检测
+// Collision detection
 function checkCollision() {
     const characterRect = character.getBoundingClientRect();
 
     document.querySelectorAll('.obstacle').forEach(obstacle => {
         const obstacleRect = obstacle.getBoundingClientRect();
 
-        // 检查角色与障碍物是否有重叠
+        // Check if the character overlaps with the obstacle
         if (characterRect.right > obstacleRect.left &&
             characterRect.left < obstacleRect.right &&
             characterRect.bottom > obstacleRect.top &&
@@ -191,7 +193,7 @@ function checkCollision() {
 }
 
 function createObstacle() {
-    if (isPaused) return; // 如果游戏暂停，不生成障碍物
+    if (isPaused) return; // stop game, stop creat obstacle
 
     const animationDuration = 3; // 动画持续时间设为3秒，障碍物和奖励物品共用
 
@@ -211,7 +213,7 @@ function createObstacle() {
     bottomImageElement.style.backgroundImage = `url(${randomBottomObject.image})`;
     topImageElement.style.backgroundImage = `url(${randomTopObject.image})`;
 
-    // 创建用于显示威胁名称的文本元素
+    // Create a text element that displays the threat name
     const bottomThreatText = document.createElement('div');
     bottomThreatText.classList.add('threat-text');
     bottomThreatText.innerText = randomBottomObject.threatName;
@@ -220,7 +222,7 @@ function createObstacle() {
     topThreatText.classList.add('threat-text');
     topThreatText.innerText = randomTopObject.threatName;
 
-    // 将图片元素和文本元素依次添加到障碍物容器中
+    // Add image elements and text elements to the obstacle container in sequence
     bottomContainer.appendChild(bottomImageElement);
     bottomContainer.appendChild(bottomThreatText);
 
@@ -247,7 +249,7 @@ function createObstacle() {
     gameArea.appendChild(bottomContainer);
     gameArea.appendChild(topContainer);
 
-    // 设置障碍物的动画持续时间
+    // Set animation for obstacles
     bottomContainer.style.animationDuration = `${animationDuration}s`;
     topContainer.style.animationDuration = `${animationDuration}s`;
 
@@ -336,6 +338,52 @@ function updateRewardCollectionnumber(count) {
     counterDisplay.innerText = `Need: ${rewardsNeedPerAround} | Plant Collected: ${count}`;
 }
 
+// POST 请求：将数据发送到服务器并保存到 session 和文件
+function sendPostRequest(completionTime) {
+    fetch('/index.php?route=session_data', {
+        method: 'POST',  // 指定为 POST 请求
+        headers: {
+            'Content-Type': 'application/json'  // 设置请求头，声明发送的数据为 JSON
+        },
+        body: JSON.stringify({
+            'data': { "level": completionTime }  // 发送的数据，包含 "level" 字段
+        })
+    })
+    .then(response => response.json())  // 将响应解析为 JSON
+    .then(data => {
+        console.log('POST response:', data);  // 输出服务器返回的数据
+    })
+    .catch(error => {
+        console.error('Error in POST request:', error);  // 错误处理
+    });
+}
+
+// GET 请求：从服务器获取会话数据
+function sendGetRequest() {
+    fetch('/index.php?route=session_data', {
+        method: 'GET',  // 指定为 GET 请求
+        headers: {
+            'Content-Type': 'application/json'  // 设置请求头，期望 JSON 响应
+        }
+    })
+    .then(response => {
+        if (!response.ok) {  // 检查响应状态码
+            throw new Error('Network response was not ok: ' + response.statusText);
+        }
+        return response.json();  // 将响应解析为 JSON
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('GET response data:', data.data);  // 输出服务器返回的会话数据
+        } else {
+            console.error('Error in GET request:', data.message);  // 错误处理
+        }
+    })
+    .catch(error => {
+        console.error('Error in GET request:', error);  // 网络或其他错误处理
+    });
+}
+
 // 发送分数到服务器并处理页面跳转
 function sendScoreToServer(score) {
     // 使用 AJAX 发送分数
@@ -379,16 +427,18 @@ function rewardCountPass() {
 }
 
 function gameCompleted() {
-    setTimeout(function () {
+    
+    completionTime++;
+    sendPostRequest(completionTime);
+    // 跳转到主页面
+    window.location.href = '/index.html';
+
+    /* setTimeout(function () {
         // 存储游戏完成状态到 localStorage
         localStorage.setItem('gameCompleted', 'true');
-        console.log('游戏完成信号已存储到 localStorage');
-
-        // 跳转到主页面
-        window.location.href = '/index.html';
-    }, );
+        console.log('游戏完成信号已存储到 localStorage');  
+    }, ); */
 }
-
 
 // 显示提示信息
 function showHintMessage() {
@@ -443,6 +493,25 @@ function parseCSV(api_link) {
         });
     });
 }
+
+// 获取视频元素
+const video = document.getElementById('videoPlayer');
+
+// 隐藏所有默认控件
+video.controls = false;
+
+// 自动播放并静音
+video.autoplay = true;
+video.muted = true;
+
+// 确保视频只播放一次
+video.loop = false;  // 禁止循环播放
+video.addEventListener('ended', function() {
+    console.log('视频播放结束');
+    // 视频结束后，你可以执行一些操作，例如显示一个消息
+    // 或者改变页面上的其他元素。
+});
+
 
 gamePassExitBtn.addEventListener('click', function () {
     gameCompleted();

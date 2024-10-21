@@ -30,28 +30,96 @@ async function getData() {
 // Populate Family, Genus, and Species dropdowns
 function populateFilters(data) {
   const families = new Set();
-  const genera = new Set();
-  const species = new Set();
+  const genera = new Map();  // Using a map to relate family with genus
+  const species = new Map(); // Using a map to relate genus with species
 
   data.forEach(occurrence => {
     families.add(occurrence.family);
-    genera.add(occurrence.genus);
-    species.add(occurrence.species);
+    
+    if (!genera.has(occurrence.family)) {
+      genera.set(occurrence.family, new Set());
+    }
+    genera.get(occurrence.family).add(occurrence.genus);
+
+    if (!species.has(occurrence.genus)) {
+      species.set(occurrence.genus, new Set());
+    }
+    species.get(occurrence.genus).add(occurrence.species);
   });
 
   updateDropdown(familyFilter, families);
-  updateDropdown(genusFilter, genera);
-  updateDropdown(speciesFilter, species);
+  
+  familyFilter.addEventListener('change', () => {
+    updateGenusOptions(genera);
+    updateSpeciesOptions(species);
+    filterPlants();
+  });
+
+  genusFilter.addEventListener('change', () => {
+    updateSpeciesOptions(species);
+    filterPlants();
+  });
+
+  speciesFilter.addEventListener('change', filterPlants);
 }
 
-// Update dropdown options
+// Update Family dropdown options
 function updateDropdown(dropdown, items) {
+  dropdown.innerHTML = '<option value="all">All</option>';
   items.forEach(item => {
     const option = document.createElement('option');
     option.value = item;
     option.textContent = item;
     dropdown.appendChild(option);
   });
+}
+
+// Update Genus dropdown options based on the selected family
+function updateGenusOptions(genera) {
+  const selectedFamily = familyFilter.value;
+  genusFilter.innerHTML = '<option value="all">All</option>';
+
+  if (selectedFamily === 'all') {
+    genera.forEach((genusSet) => {
+      genusSet.forEach(genus => {
+        const option = document.createElement('option');
+        option.value = genus;
+        option.textContent = genus;
+        genusFilter.appendChild(option);
+      });
+    });
+  } else {
+    genera.get(selectedFamily)?.forEach(genus => {
+      const option = document.createElement('option');
+      option.value = genus;
+      option.textContent = genus;
+      genusFilter.appendChild(option);
+    });
+  }
+}
+
+// Update Species dropdown options based on the selected genus
+function updateSpeciesOptions(species) {
+  const selectedGenus = genusFilter.value;
+  speciesFilter.innerHTML = '<option value="all">All</option>';
+
+  if (selectedGenus === 'all') {
+    species.forEach((speciesSet) => {
+      speciesSet.forEach(speciesItem => {
+        const option = document.createElement('option');
+        option.value = speciesItem;
+        option.textContent = speciesItem;
+        speciesFilter.appendChild(option);
+      });
+    });
+  } else {
+    species.get(selectedGenus)?.forEach(speciesItem => {
+      const option = document.createElement('option');
+      option.value = speciesItem;
+      option.textContent = speciesItem;
+      speciesFilter.appendChild(option);
+    });
+  }
 }
 
 // Display filtered plant profiles
@@ -82,7 +150,6 @@ function displayPlants(filteredData) {
                 $('<h4>').html('<strong>Genus:</strong>' + recordGenus),
                 $('<h4>').html('<strong>Species:</strong>' + recordSpecies),
                 $('<p>').html('<strong>Description:</strong><br>' + recordDescription),
-                // $('<p>').html('<strong>Location:</strong><br>' + recordLocation)
             )
           )
         )
@@ -106,11 +173,6 @@ function filterPlants() {
 
   displayPlants(filtered);
 }
-
-// Event listeners for filters
-familyFilter.addEventListener('change', filterPlants);
-genusFilter.addEventListener('change', filterPlants);
-speciesFilter.addEventListener('change', filterPlants);
 
 document.addEventListener('DOMContentLoaded', () => {
   getData();

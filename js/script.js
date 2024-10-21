@@ -103,7 +103,7 @@ $(document).ready(function() {
         }
     }, 1000);  // 每秒检查一次 */
 
-	window.onload = function() {
+	/*window.onload = function() {
 		if (localStorage.getItem('gameCompleted') === 'true') {
 			alert('主页面加载时检测到游戏完成的信号');
 			// 在这里执行其他逻辑，例如更新页面的状态或显示提示
@@ -123,7 +123,7 @@ $(document).ready(function() {
 			localStorage.removeItem('gameCompleted');
 		}
 	});
-
+	*/
 
 	// 当游戏成功通关时调用此函数
 	function onLevelSuccess() {
@@ -180,15 +180,32 @@ $(document).ready(function() {
 		});
 	}
 
-	/*$('#successButton').click(function () {
+	/* $('#successButton').click(function () {
 		console.log('Button clicked!');
 		gameSuccessHandler();  // 每次成功触发
-	});
-	*/
-	function gameSuccessHandler() {
+	}); */
+
+	/* function gameSuccessHandler() {
 		console.log('Game success logic triggered');
 		onLevelSuccess();  // 每次游戏成功后调用，显示新的family
-	} 
+	}
+	 */
+
+	// 在页面加载时请求完成次数并执行后续逻辑
+    getGameCompletionCount().then(gameCompletionCount => {
+        console.log('Game completion count:', gameCompletionCount);
+
+        // 根据获取到的完成次数执行不同的逻辑
+        if (gameCompletionCount > 0) {
+            console.log('Game completed ' + gameCompletionCount + ' times');
+            // 这里可以根据完成次数显示不同的内容
+            for (let i = 0; i < gameCompletionCount; i++) {
+                onLevelSuccess();  // 每次通关显示新家族物种
+            }
+        } else {
+            console.log('No game completions detected');
+        }
+    });
 
 // 检查 localStorage 中是否有 'guideHidden' 键
 if (localStorage.getItem('guideHidden') === 'true') {

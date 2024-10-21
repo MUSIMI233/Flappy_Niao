@@ -192,11 +192,14 @@ html, body {
   max-width:600px;
   margin:0 auto;
 }
-#videoPlayer{
-  width:50%;
-  height:50%;
+
+#videoPlayer {
+  width: 55%;
+  height: 110%;
   border-radius: 10px;
 }
+
+
 .hint{
   position: absolute;
   top: 10vh;
