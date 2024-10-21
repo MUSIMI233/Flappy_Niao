@@ -46,7 +46,7 @@ window.addEventListener('keyup', function (event) {
     }
 });
 
-// 暂停按钮
+// Pause btn
 pauseBtn.addEventListener('click', function () {
     isPaused = true; // stop the game
     pauseWindow.style.display = 'flex';
@@ -58,44 +58,24 @@ pauseBtn.addEventListener('click', function () {
     });
 });
 
-// continue
-/*resumeBtn.addEventListener('click', function () {
-    isPaused = false; //
-    pauseWindow.style.display = 'none'; //
-    document.querySelectorAll('.obstacle').forEach(obstacle => {
-        obstacle.style.animationPlayState = 'running'; //
-    });
-    document.querySelectorAll('.reward').forEach(reward => {
-        reward.style.animationPlayState = 'running'; //
-    });
-});
 
-*/
 // Back button for pause interface
 pauseExitBtn.addEventListener('click', function () {
     window.location.href = '/index.html';
 });
 
-// The return button on the game end interface
-// gameOverExitBtn.addEventListener('click', function() {
-//     window.location.href = '/index.html';
-// });
-//
-// gamePassExitBtn.addEventListener('click', function() {
-//     window.location.href = '/index.html';
-// });
 gameExitBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
         window.location.href = '/index.html';
     })
 });
 
-// Try Again按钮
+// Try Again button
 retryBtn.addEventListener('click', function () {
-    location.reload(); // 重新加载页面
+    location.reload();
 });
 
-// 更新角色的位置并进行碰撞检测
+// refresh character location and check collection
 function updateCharacter() {
     if (isPaused) return;
     if (isGameStarted) {
@@ -104,19 +84,19 @@ function updateCharacter() {
         }
         characterY += velocity;
 
-        // 防止角色掉出屏幕底部
+        // avoid character down out screen
         if (characterY + character.offsetHeight >= window.innerHeight) {
             characterY = window.innerHeight - character.offsetHeight;
             velocity = 0;
         }
 
-        // 防止角色飞出屏幕顶部
+        // avoid character up out screen
         if (characterY <= 0) {
             characterY = 0;
             velocity = 0;
         }
 
-        // 更新角色位置
+        // refresh location
         character.style.top = `${characterY}px`;
 
         checkCollision();
@@ -129,7 +109,6 @@ function updateCharacter() {
 updateCharacter();
 
 // Creat Obstacle
-// button images
 const bottomImages = [
     {image: 'assets/images/weeds.png', threatName: 'Weeds'},
     {image: 'assets/images/bug.png', threatName: 'Bug'},
@@ -195,7 +174,7 @@ function checkCollision() {
 function createObstacle() {
     if (isPaused) return; // stop game, stop creat obstacle
 
-    const animationDuration = 3; // 动画持续时间设为3秒，障碍物和奖励物品共用
+    const animationDuration = 3; // Animation duration set to 3 seconds, shared by obstacles and bonus items
 
     const bottomContainer = document.createElement('div');
     const topContainer = document.createElement('div');
@@ -253,7 +232,7 @@ function createObstacle() {
     bottomContainer.style.animationDuration = `${animationDuration}s`;
     topContainer.style.animationDuration = `${animationDuration}s`;
 
-    // 移除障碍物
+    // remove container
     setTimeout(() => {
         if (!isPaused) {
             bottomContainer.remove();
@@ -261,8 +240,8 @@ function createObstacle() {
         }
     }, animationDuration * 1000);
 
-    // 延迟生成奖励物品（1秒后）
-    setTimeout(generateReward, 1000); // 在障碍物生成后1秒生成奖励物品
+    // Delayed generation of bonus items (after 1 second)
+    setTimeout(generateReward, 1000);
 }
 
 function generateReward() {
@@ -270,13 +249,13 @@ function generateReward() {
 
     const animationDuration = 3;
 
-    // 生成奖励物品
+    //generation of bonus items
     const reward = document.createElement('div');
     reward.classList.add('reward');
     const randomRewardImage = rewardImages[Math.floor(Math.random() * rewardImages.length)];
     reward.style.backgroundImage = `url(${randomRewardImage})`;
 
-    // 随机生成奖励物品在屏幕中的任意位置
+    // Randomly generates bonus items anywhere in the screen
     const randomRewardTop = Math.floor(Math.random() * (screenHeight - 50));
     reward.style.top = `${randomRewardTop}px`;
     reward.style.position = 'absolute';
@@ -287,17 +266,17 @@ function generateReward() {
 
     gameArea.appendChild(reward);
 
-    // 移除奖励物品
+    // remove reward
     setTimeout(() => {
         if (!isPaused) {
-            reward.remove(); // 移除奖励物品
+            reward.remove();
         }
-    }, animationDuration * 1000); // 动画结束后移除
+    }, animationDuration * 1000);
 }
 
 updateRewardCollectionnumber(rewardCollected);
 
-// 检测玩家是否收集了奖励物品
+
 function checkRewardCollection() {
     const characterRect = character.getBoundingClientRect();
     const rewardRect = document.querySelectorAll('.reward');
@@ -310,10 +289,10 @@ function checkRewardCollection() {
             characterRect.bottom > rewardPosition.top &&
             characterRect.top < rewardPosition.bottom
         ) {
-            // 玩家收集到了奖励
-            reward.remove(); // 移除奖励物品
+
+            reward.remove();
             console.log('Reward collected!');
-            // 增加个数
+
             rewardCollected += 1;
             updateRewardCollectionnumber(rewardCollected);
             rewardCountPass();
@@ -338,7 +317,7 @@ function updateRewardCollectionnumber(count) {
     counterDisplay.innerText = `Need: ${rewardsNeedPerAround} | Plant Collected: ${count}`;
 }
 
-// POST 请求：将数据发送到服务器并保存到 session 和文件
+// POST save data to session.js
 async function sendPostRequest(completionTime) {
     const response = await fetch('/session.php?route=session_data', {
         method: 'POST',
@@ -347,78 +326,64 @@ async function sendPostRequest(completionTime) {
         },
         body: JSON.stringify({'data':{
             'level':completionTime
-        }})  // 將 completionTime 作為數據發送
+        }})  // using completionTime as data
     });
 
-    if (!response.ok) {  // 檢查響應狀態碼
+    if (!response.ok) {  // check data
         throw new Error('Network response was not ok: ' + response.statusText);
     }
 
     const data = await response.json();
     if (data.status === 'success') {
-        console.log('POST 成功:', data);
+        console.log('POST work:', data);
     } else {
-        console.error('POST 錯誤:', data.message);
+        console.error('POST Wrong:', data.message);
     }
 }
 
-// GET 请求：从服务器获取会话数据
+// GET
 async function sendGetRequest() {
     try {
         const response = await fetch('/session.php?route=session_data', {
-            method: 'GET',  // 指定为 GET 请求
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json'  // 设置请求头，期望 JSON 响应
+                'Content-Type': 'application/json'
             }
         });
 
-        if (!response.ok) {  // 检查响应状态码
+        if (!response.ok) {
             throw new Error('Network response was not ok: ' + response.statusText);
         }
 
-        const data = await response.json();  // 將響應解析為 JSON
+        const data = await response.json();  //  JSON
         if (data.status === 'success') {
-            console.log('GET response data:', data.data.level);  // 输出服务器返回的会话数据
-            return data.data.level;  // 返回 completionTime
+            console.log('GET response data:', data.data.level);  // return data
+            return data.data.level;
         } else {
-            console.error('Error in GET request:', data.message);  // 错误处理
+            console.error('Error in GET request:', data.message);
             return null;
         }
     } catch (error) {
-        console.error('Error in GET request:', error);  // 网络或其他错误处理
+        console.error('Error in GET request:', error);
         return null;
     }
 }
 
-// 在外部使用 async/await 調用 sendGetRequest 函數
+// async/await and sendGetRequest
 async function gameInit() {
-    // 使用 await 等待 sendGetRequest 完成，並獲取返回的 completionTime
     completionTime = await sendGetRequest();
 
     if (completionTime !== null) {
-        console.log('Completion time:', completionTime);  // 獲取並使用 completionTime
-        // 在這裡繼續處理 completionTime，或者進行後續操作
+        console.log('Completion time:', completionTime);
+
     } else {
         console.error('Failed to get completion time');
     }
 }
 
-// 发送分数到服务器并处理页面跳转
-// function sendScoreToServer(score) {
-//     // 使用 AJAX 发送分数
-//     const xhr = new XMLHttpRequest();
-//     xhr.open('POST', 'update_game.php', true);
-//     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-//     xhr.onreadystatechange = function() {
-//         if (xhr.readyState === 4 && xhr.status === 200) {
-//             // 在AJAX成功完成后再设置页面跳转
-//             console.log('Score sent to server successfully.');
-//         }
-//     };
-//     xhr.send('score=' + score);
-// }
 
-// 检测通关
+
+// check pass
 function rewardCountPass() {
     if (rewardCollected >= rewardsNeedPerAround) {
         isPaused = true;
@@ -432,15 +397,14 @@ function rewardCountPass() {
 
         clearInterval(obstacleGenerationInterval);
 
-        // 发送分数到服务器
-        // sendScoreToServer(rewardCollected);
 
-        // 添加跳转回主界面的逻辑
+
+        // return main page
         const gamePassExitBtn = document.querySelectorAll('.game-pass-exit-btn');
         gamePassExitBtn.forEach(btn => {
             gameCompleted();
             btn.addEventListener('click', () => {
-                window.location.href = '/index.html'; // 主界面路径，调整为你的实际路径
+                window.location.href = '/index.html';
             });
         });
     }
@@ -449,27 +413,26 @@ function rewardCountPass() {
 async function gameCompleted() {
     try {
         completionTime++;
-        // 使用 await 等待 POST 請求完成
+
         await sendPostRequest(completionTime);
 
-        // POST 完成後進行跳轉
-       // window.location.href = '/index.html';
+
+
     } catch (error) {
         console.error('Error in gameCompleted:', error);
     }
 }
 
-// 显示提示信息
-function showHintMessage() {
-    hintMessage.style.display = 'block'; // 显示提示
 
-    // 3.5秒后隐藏提示
+function showHintMessage() {
+    hintMessage.style.display = 'block';
+
     setTimeout(() => {
         hintMessage.style.display = 'none';
     }, 3500);
 }
 
-// 在游戏开始时调用提示函数
+
 showHintMessage();
 
 // const api_link = 'https://www.stateoftheenvironment.des.qld.gov.au/2020/datasets/indicator-1-4-2-4.csv';
@@ -477,7 +440,7 @@ showHintMessage();
 const api_link = './csv/threats.csv';
 var threatjson;
 
-// 异步加载CSV数据
+
 async function ready() {
     try {
         threatjson = await parseCSV(api_link);
@@ -504,31 +467,28 @@ function parseCSV(api_link) {
             header: true,
             skipEmptyLines: true,
             complete: function (result) {
-                resolve(result.data); // 解析成功，返回数据
+                resolve(result.data);
             },
             error: function (error) {
-                reject(error); // 解析失败，返回错误
+                reject(error);
             }
         });
     });
 }
 
-// 获取视频元素
+//video.animation
 const video = document.getElementById('videoPlayer');
 
-// 隐藏所有默认控件
+
 video.controls = false;
 
-// 自动播放并静音
+
 video.autoplay = true;
 video.muted = true;
 
-// 确保视频只播放一次
-video.loop = false;  // 禁止循环播放
+
+video.loop = false;
 video.addEventListener('ended', function() {
-    console.log('视频播放结束');
-    // 视频结束后，你可以执行一些操作，例如显示一个消息
-    // 或者改变页面上的其他元素。
 });
 
 
