@@ -71,7 +71,7 @@ $(document).ready(async function() {
 	};
 
 	// store all species data
-	// var speciesData = [];
+	var speciesData = [];
 	var currentFamilyIndex = 0;  // current displayed family index
 	var maxFamiliesToShow = 5;   // max family tags is 5
   
@@ -213,7 +213,7 @@ if (localStorage.getItem('guideHidden') === 'true') {
 }
 
 	await gameInit();
-	await getSpeciesData();
+	var speciesData = await getSpeciesData();
 	successButton(completionTime);
 
 });
