@@ -1,5 +1,5 @@
 <?php
-session_start(); // 啟用 session
+session_start();
 
 $method = $_SERVER['REQUEST_METHOD'];
 // get route parameter
