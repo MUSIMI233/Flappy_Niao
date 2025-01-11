@@ -7,6 +7,8 @@ var maxFamiliesToShow = 5;   // max family tags is 5
 // store all species data
 var speciesData = [];
 var familyIcons = {};
+var map;
+var greenIcon;
 
 function iterateRecords(results) {
 
@@ -32,46 +34,6 @@ async function getSpeciesData() {
 	} catch (error) {
 		console.error('Error fetching API data:', error);
 		return null;
-	}
-}
-
-// GET request: get data from PHP API
-// async function sendGetRequest() {
-// 	try {
-// 		const response = await fetch('/session.php?route=session_data', {
-// 			method: 'GET',
-// 			headers: {
-// 				'Content-Type': 'application/json'
-// 			}
-// 		});
-//
-// 		if (!response.ok) {  // check response states
-// 			throw new Error('Network response was not ok: ' + response.statusText);
-// 		}
-//
-// 		const data = await response.json();  // response -> json
-// 		if (data.status === 'success') {
-// 			console.log('GET response data:', data.data.level);  // output data
-// 			return data.data.level;
-// 		} else {
-// 			console.error('Error in GET request:', data.message);
-// 			return null;
-// 		}
-// 	} catch (error) {
-// 		console.error('Error in GET request:', error);
-// 		return null;
-// 	}
-// }
-
-// use async/await outside ,use sendGetRequest function
-async function gameInit() {
-	// use await to wait sendGetRequest finishing，get returned completionTime
-	// completionTime = await sendGetRequest();
-	completionTime = getGameProgress();
-	if (completionTime !== null) {
-		console.log('Completion time:', completionTime);  // get and use completionTime
-	} else {
-		console.error('Failed to get completion time');
 	}
 }
 
@@ -134,13 +96,8 @@ function displaySpeciesOnMap(speciesData) {
 function successButton(completionTime) {
 	for (let i = 0; i < completionTime; i++) {
 		console.log('Button clicked!');
-		gameSuccessHandler();  // run when success
+		onLevelSuccess();  // show icon on map
 	}
-}
-
-function gameSuccessHandler() {
-	console.log('Game success logic triggered');
-	onLevelSuccess();  // show icon on map
 }
 
 
@@ -161,7 +118,7 @@ $(document).ready(async function() {
 		localStorage.setItem('guideHidden', 'true');
 	});
 
-	var map = L.map('map').setView([-18.5, 145.5], 6);
+	map = L.map('map').setView([-18.5, 145.5], 6);
 	L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		maxZoom: 19,
 		attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -178,7 +135,7 @@ $(document).ready(async function() {
 		}
 	});
 
-	var greenIcon = new LeafIcon({iconUrl: 'assets/images/leaf-green.png'}),
+	greenIcon = new LeafIcon({iconUrl: 'assets/images/leaf-green.png'}),
     	redIcon = new LeafIcon({iconUrl: 'assets/images/leaf-red.png'}),
 		pinkIcon = new LeafIcon({iconUrl: 'assets/images/leaf-pink.png'}),
 		purpleIcon = new LeafIcon({iconUrl: 'assets/images/leaf-purple.png'}),
@@ -196,27 +153,17 @@ $(document).ready(async function() {
 		"Clusiaceae": purpleIcon,
 	};
 
-	
-	
-  
+	// check if  localStorage has 'guideHidden'
+	if (localStorage.getItem('guideHidden') === 'true') {
+		// if guide is hided，no guide, no button
+		guide.style.display = 'none';
+		guideBtn.disabled = true;
+	} else {
+		// if no hiding, show guide
+		guide.style.display = 'flex';
+	}
 
-
-
-
-
-
-
-// check if  localStorage has 'guideHidden'
-if (localStorage.getItem('guideHidden') === 'true') {
-	// if guide is hided，no guide, no button
-	guide.style.display = 'none';
-	guideBtn.disabled = true;
-} else {
-	// if no hiding, show guide
-	guide.style.display = 'flex';
-}
-
-	await gameInit();
+	completionTime = getGameProgress();
 	speciesData = await getSpeciesData();
 	successButton(completionTime);
 
