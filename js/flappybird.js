@@ -61,12 +61,12 @@ pauseBtn.addEventListener('click', function () {
 
 // Back button for pause interface
 pauseExitBtn.addEventListener('click', function () {
-    window.location.href = '/index.html';
+    window.location.href = './index.html';
 });
 
 gameExitBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
-        window.location.href = '/index.html';
+        window.location.href = './index.html';
     })
 });
 
@@ -341,6 +341,16 @@ async function sendPostRequest(completionTime) {
     }
 }
 
+function saveGameProgress(completionTime) {
+     localStorage.setItem('level', completionTime);
+    console.log(localStorage.getItem('level'));
+}
+
+function getGameProgress() {
+    const level = parseInt(localStorage.getItem('level'));
+    completionTime =  level ? level : 0;
+}
+
 // GET
 async function sendGetRequest() {
     try {
@@ -371,8 +381,8 @@ async function sendGetRequest() {
 
 // async/await and sendGetRequest
 async function gameInit() {
-    completionTime = await sendGetRequest();
-
+    // completionTime = await sendGetRequest();
+    getGameProgress();
     if (completionTime !== null) {
         console.log('Completion time:', completionTime);
 
@@ -404,7 +414,7 @@ function rewardCountPass() {
         gamePassExitBtn.forEach(btn => {
             gameCompleted();
             btn.addEventListener('click', () => {
-                window.location.href = '/index.html';
+                window.location.href = './index.html';
             });
         });
     }
@@ -414,8 +424,8 @@ async function gameCompleted() {
     try {
         completionTime++;
 
-        await sendPostRequest(completionTime);
-
+        // await sendPostRequest(completionTime);
+        saveGameProgress(completionTime);
 
 
     } catch (error) {
