@@ -124,7 +124,8 @@ function updateSpeciesOptions(species) {
 
 // Display filtered plant profiles
 function displayPlants(filteredData) {
-  plants.innerHTML = ''; // Clear existing content
+  // plants.innerHTML = ''; // Clear existing content
+  const fragment = document.createDocumentFragment();
 
   filteredData.forEach(occurence => {
     const recordName1 = occurence.vernacularName;
@@ -137,25 +138,27 @@ function displayPlants(filteredData) {
     const recordDescription = occurence.raw_occurrenceRemarks;
 
     if (recordName1 && recordName2 && recordFamily && recordGenus && recordSpecies && recordLocation && recordDescription) {
-      $(plants).append(
-        $('<div class="plantProfile">').append(
-          $('<div class="CardInner">').append(
-            $('<div class="CardFront">').append(
-              $('<img>').attr("src", recordImage)
-            ),
-            $('<div class="CardBack">').append(
-                $('<h3>').html('<strong>Common Name:</strong><br>' + recordName1),
-                $('<h3>').html('<strong>Scientific Name:</strong><br>' + recordName2),
-                $('<h4>').html('<strong>Family:</strong>' + recordFamily),
-                $('<h4>').html('<strong>Genus:</strong>' + recordGenus),
-                $('<h4>').html('<strong>Species:</strong>' + recordSpecies),
-                $('<p>').html('<strong>Description:</strong><br>' + recordDescription),
-            )
-          )
-        )
-      );
+      const plantCard = document.createElement('div');
+      plantCard.classList.add('plantProfile');
+      plantCard.innerHTML = `
+        <div class="CardInner">
+          <div class="CardFront">
+            <img src="${recordImage}" alt="${recordName1}">
+          </div>
+          <div class="CardBack">
+            <h3><strong>Common Name:</strong><br>${recordName1}</h3>
+            <h3><strong>Scientific Name:</strong><br>${recordName2}</h3>
+            <h4><strong>Family:</strong>${recordFamily}</h4>
+            <h4><strong>Genus:</strong>${recordGenus}</h4>
+            <h4><strong>Species:</strong>${recordSpecies}</h4>
+            <p><strong>Description:</strong><br>${recordDescription}</p>
+          </div>
+        </div>
+      `;
+      fragment.appendChild(plantCard);
     }
   });
+  plants.appendChild(fragment);
 }
 
 // Filter plants based on selected Family, Genus, and Species
