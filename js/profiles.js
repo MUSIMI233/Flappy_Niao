@@ -174,6 +174,4 @@ function filterPlants() {
   displayPlants(filtered);
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  getData();
-});
+document.addEventListener('DOMContentLoaded', getData);

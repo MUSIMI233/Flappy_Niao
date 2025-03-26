@@ -61,12 +61,12 @@ pauseBtn.addEventListener('click', function () {
 
 // Back button for pause interface
 pauseExitBtn.addEventListener('click', function () {
-    window.location.href = './index.html';
+    window.location.href = './';
 });
 
 gameExitBtn.forEach((btn) => {
     btn.addEventListener('click', () => {
-        window.location.href = './index.html';
+        window.location.href = './';
     })
 });
 
@@ -414,7 +414,7 @@ function rewardCountPass() {
         gamePassExitBtn.forEach(btn => {
             gameCompleted();
             btn.addEventListener('click', () => {
-                window.location.href = './index.html';
+                window.location.href = './';
             });
         });
     }

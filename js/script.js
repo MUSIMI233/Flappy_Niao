@@ -1,14 +1,14 @@
 // 获取元素
 const guide = document.getElementById('guide');
 const guideBtn = document.getElementById('guide-btn');
-var completionTime = 0;
-var currentFamilyIndex = 0;  // current displayed family index
-var maxFamiliesToShow = 5;   // max family tags is 5
+let completionTime = 0;
+let currentFamilyIndex = 0;  // current displayed family index
+const maxFamiliesToShow = 5;   // max family tags is 5
 // store all species data
-var speciesData = [];
-var familyIcons = {};
-var map;
-var greenIcon;
+let speciesData = [];
+let familyIcons = {};
+let map;
+let greenIcon;
 
 function iterateRecords(results) {
 
@@ -126,7 +126,7 @@ $(document).ready(async function() {
 
 	var LeafIcon = L.Icon.extend({
 		options: {
-			shadowUrl: 'assets/images/leaf-shadow.png',
+			shadowUrl: './assets/images/leaf-shadow.png',
 			iconSize:     [38, 95],
 			shadowSize:   [50, 64],
 			iconAnchor:   [22, 94],
@@ -135,11 +135,11 @@ $(document).ready(async function() {
 		}
 	});
 
-	greenIcon = new LeafIcon({iconUrl: 'assets/images/leaf-green.png'}),
-    	redIcon = new LeafIcon({iconUrl: 'assets/images/leaf-red.png'}),
-		pinkIcon = new LeafIcon({iconUrl: 'assets/images/leaf-pink.png'}),
-		purpleIcon = new LeafIcon({iconUrl: 'assets/images/leaf-purple.png'}),
-    	orangeIcon = new LeafIcon({iconUrl: 'assets/images/leaf-orange.png'});
+	greenIcon = new LeafIcon({iconUrl: './assets/images/leaf-green.png'}),
+    	redIcon = new LeafIcon({iconUrl: './assets/images/leaf-red.png'}),
+		pinkIcon = new LeafIcon({iconUrl: './assets/images/leaf-pink.png'}),
+		purpleIcon = new LeafIcon({iconUrl: './assets/images/leaf-purple.png'}),
+    	orangeIcon = new LeafIcon({iconUrl: './assets/images/leaf-orange.png'});
 
 	L.icon = function (options) {
 		return new L.Icon(options);
